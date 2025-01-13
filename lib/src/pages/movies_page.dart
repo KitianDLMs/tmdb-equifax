@@ -17,8 +17,7 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {  
-
+class _HomePageState extends State<HomePage> {
   int? selectedMovieId;
   double rating = 1.0;
 
@@ -29,7 +28,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-  final movieProvider = Provider.of<APIProvider>(context).getPopular();
+    final movieProvider = Provider.of<APIProvider>(context).getPopular();
     return Scaffold(
       body: Container(
         child: SingleChildScrollView(
@@ -47,12 +46,16 @@ class _HomePageState extends State<HomePage> {
                 SizedBox(
                   height: 20,
                 ),
-                const Text(
-                  "Find your movies",
-                  style: TextStyle(
-                    fontWeight: FontWeight.normal,
-                    fontSize: 18,
-                    color: Colors.black,
+                const Padding(
+                  padding:
+                      EdgeInsets.only(bottom: 0),
+                  child: Text(
+                    "Find your movies",
+                    style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      fontSize: 18,
+                      color: Colors.black,
+                    ),
                   ),
                 ),
                 Row(
@@ -193,12 +196,10 @@ class _HomePageState extends State<HomePage> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text('title'),
+                                      Text('Title'),
                                       Text(
                                         movie.title!,
                                         style: const TextStyle(
-                                            // fontSize: 18,
-                                            // fontWeight: FontWeight.bold,
                                             ),
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
@@ -207,15 +208,11 @@ class _HomePageState extends State<HomePage> {
                                       Text(
                                         "Release Date:",
                                         style: const TextStyle(
-                                            // fontSize: 14,
-                                            // color: Colors.grey,
                                             ),
                                       ),
                                       Text(
                                         "${movie.releaseDate}",
                                         style: const TextStyle(
-                                            // fontSize: 14,
-                                            // color: Colors.grey,
                                             ),
                                       ),
                                       const SizedBox(height: 5),
@@ -224,11 +221,7 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                       Text(
                                         "${movie.voteAverage}",
-                                        style: const TextStyle(
-                                          // fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.amber,
-                                        ),
+                                        style: const TextStyle(),
                                       ),
                                     ],
                                   ),
@@ -237,35 +230,35 @@ class _HomePageState extends State<HomePage> {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     IconButton(
-                                        onPressed: () async {                                          
+                                        onPressed: () async {
                                           final prefs = await SharedPreferences
                                               .getInstance();
-                                                                                        
+
                                           final movieJson =
                                               jsonEncode(movie.toMap());
-                                    
+
                                           List<String> wishList =
                                               prefs.getStringList('wishList') ??
                                                   [];
-                                          
-                                          if (wishList.contains(movieJson)) {                                            
+
+                                          if (wishList.contains(movieJson)) {
                                             ScaffoldMessenger.of(context)
                                                 .showSnackBar(
                                               SnackBar(
                                                 content: Text(
-                                                    '${movie.title} ya está en la lista de deseos'),
+                                                    '${movie.title} ya está en la lista de vistos'),
                                               ),
                                             );
-                                          } else {                                            
+                                          } else {
                                             wishList.add(movieJson);
                                             await prefs.setStringList(
                                                 'wishList', wishList);
-                                            
+
                                             ScaffoldMessenger.of(context)
                                                 .showSnackBar(
                                               SnackBar(
                                                 content: Text(
-                                                    '${movie.title} añadida a la lista de deseos'),
+                                                    '${movie.title} añadida a la lista de vistos'),
                                               ),
                                             );
                                           }
@@ -310,9 +303,9 @@ class _HomePageState extends State<HomePage> {
                                                   "Rating de ${movie.title}: $rating");
                                               setState(() {
                                                 movie.userRating =
-                                                    rating; // Asigna la calificación
+                                                    rating;
                                                 selectedMovieId =
-                                                    null; // Cierra el control
+                                                    null;
                                               });
                                             },
                                             child: const Text("Submit"),
@@ -321,7 +314,7 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                     if (movie.userRating != null)
                                       Padding(
-                                        padding: const EdgeInsets.only(top: 5),
+                                        padding: const EdgeInsets.only(top: 0),
                                         child: Text(
                                           "${movie.userRating != 0.0 ? movie.userRating!.toStringAsFixed(1) : 'na'}",
                                           style: const TextStyle(

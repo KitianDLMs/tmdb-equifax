@@ -55,31 +55,7 @@ class APIProvider with ChangeNotifier {
       print("Error fetching reviews: $e");
       return [];
     }
-  }
-
-  Future<List<Movie>> getNowShowing() async {
-    Uri url = Uri.parse(nowShowingApi);
-    final response = await http.get(url);
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body)['results'];
-      List<Movie> movies = data.map((movie) => Movie.fromMap(movie)).toList();
-      return movies;
-    } else {
-      throw Exception("Failed to load data");
-    }
-  }
-
-  Future<List<Movie>> getUpcomming() async {
-    Uri url = Uri.parse(upCommingApi);
-    final response = await http.get(url);
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body)['results'];
-      List<Movie> movies = data.map((movie) => Movie.fromMap(movie)).toList();
-      return movies;
-    } else {
-      throw Exception("Failed to load data");
-    }
-  }
+  }  
 
   Future<List<Movie>> getPopular() async {
     Uri url = Uri.parse(popularApi);

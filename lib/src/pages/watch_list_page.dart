@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:equifax_tmdb/src/pages/movie_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:equifax_tmdb/src/model/movie.dart';
@@ -45,7 +46,7 @@ class _WishListState extends State<WishList> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('${movie.title} fue eliminada de la lista de deseos'),
+        content: Text('${movie.title} fue eliminada de la lista de vistos'),
       ),
     );
   }
@@ -53,13 +54,7 @@ class _WishListState extends State<WishList> {
   @override
   Widget build(BuildContext context) {
     if (_wishList.isEmpty) {
-      return Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            'WishList',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ),
+      return Scaffold(        
         body: const Center(
           child: Text(
             'No hay películas en tu lista.',
@@ -90,7 +85,7 @@ class _WishListState extends State<WishList> {
               margin: const EdgeInsets.symmetric(vertical: 8),
               child: Row(
                 children: [
-                  // Imagen a la izquierda
+                  
                   SizedBox(
                     width: 90,
                     height: 150,
@@ -107,9 +102,8 @@ class _WishListState extends State<WishList> {
                     ),
                   ),
                   const SizedBox(
-                      width: 12), // Espacio entre la imagen y los textos
+                      width: 12),
 
-                  // Contenedor para el título, subtítulo y el botón de eliminación
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -166,7 +160,18 @@ class _WishListState extends State<WishList> {
                         },
                       ),
                       SizedBox(height: 40,),
-                      Text('Read More', style: TextStyle(color: Colors.green),)
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MovieDetailPage(
+                                  movie: movie,
+                                ),
+                              ),
+                            );
+                        },
+                        child: Text('Read More', style: TextStyle(color: Colors.green),))
                     ],
                   )
                 ],

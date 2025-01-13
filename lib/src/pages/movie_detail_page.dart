@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 import 'package:equifax_tmdb/src/model/movie.dart';
 import 'package:equifax_tmdb/src/providers/movie.provider.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MovieDetailPage extends StatelessWidget {
   final Movie movie;
@@ -27,10 +30,8 @@ class MovieDetailPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Existing movie details code...
                     Stack(
                       children: [
-                        // Backdrop Image
                         Container(
                           width: double.infinity,
                           height: 300,
@@ -42,7 +43,6 @@ class MovieDetailPage extends StatelessWidget {
                             ),
                           ),
                         ),
-                        // Poster Image
                         Positioned(
                           bottom: -50,
                           left: 16,
@@ -69,7 +69,6 @@ class MovieDetailPage extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 30),
-                    // Movie title, rating, etc.
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: Column(
@@ -99,7 +98,6 @@ class MovieDetailPage extends StatelessWidget {
                 ),
               ),
             ),
-            // Tab Bar
             TabBar(
               tabs: const [
                 Tab(text: "About the Movie"),
@@ -108,11 +106,9 @@ class MovieDetailPage extends StatelessWidget {
               labelColor: Colors.black,
               indicatorColor: Colors.amber,
             ),
-            // TabBarView
             Expanded(
               child: TabBarView(
                 children: [
-                  // About the Movie Tab
                   SingleChildScrollView(
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
@@ -136,7 +132,7 @@ class MovieDetailPage extends StatelessWidget {
                           ),
                           const SizedBox(height: 20),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,                            
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -184,10 +180,8 @@ class MovieDetailPage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  // Reviews Tab using FutureBuilder
                   FutureBuilder<List<dynamic>>(
-                    future: apiProvider
-                        .getReviews(movie.id!), // Get reviews from APIProvider
+                    future: apiProvider.getReviews(movie.id!),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(child: CircularProgressIndicator());
@@ -212,7 +206,6 @@ class MovieDetailPage extends StatelessWidget {
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  // Ícono de persona con calificación debajo
                                   Column(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
@@ -221,7 +214,6 @@ class MovieDetailPage extends StatelessWidget {
                                         color: Colors.amber,
                                         size: 40,
                                       ),
-                                      // Calificación debajo del ícono
                                       Text(
                                         "${review['author_details']['rating'] ?? 0} / 10",
                                         style: const TextStyle(
@@ -232,13 +224,11 @@ class MovieDetailPage extends StatelessWidget {
                                     ],
                                   ),
                                   const SizedBox(width: 12),
-                                  // Información de la reseña
                                   Expanded(
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        // Nombre del autor
                                         Text(
                                           review['author'] ?? "Anonymous",
                                           style: const TextStyle(
@@ -247,7 +237,6 @@ class MovieDetailPage extends StatelessWidget {
                                           ),
                                         ),
                                         const SizedBox(height: 4),
-                                        // Texto de la reseña (limitado a 40 palabras)
                                         Text(
                                           review['content'] != null
                                               ? review['content']
@@ -270,7 +259,6 @@ class MovieDetailPage extends StatelessWidget {
                 ],
               ),
             ),
-            // Back Button
             Container(
               margin: const EdgeInsets.only(
                   left: 20, right: 20, bottom: 20, top: 20),
@@ -282,6 +270,34 @@ class MovieDetailPage extends StatelessWidget {
                       Navigator.pop(context);
                     },
                     child: const Text('Back'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      final prefs = await SharedPreferences.getInstance();
+                      final movieJson = jsonEncode(movie.toMap());
+
+                      List<String> wishList =
+                          prefs.getStringList('wishList') ?? [];
+                      if (wishList.contains(movieJson)) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                                '${movie.title} ya está en la lista de vistos'),
+                          ),
+                        );
+                      } else {
+                        wishList.add(movieJson);
+                        await prefs.setStringList('wishList', wishList);
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                                '${movie.title} añadida a la lista de vistos'),
+                          ),
+                        );
+                      }
+                    },
+                    child: Icon(Icons.list),
                   ),
                 ],
               ),
